@@ -44,7 +44,6 @@ dependencies {
 
     // Micrometer for Prometheus metrics
     implementation 'io.micrometer:micrometer-registry-prometheus'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // Database
     runtimeOnly 'com.h2database:h2'
