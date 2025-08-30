@@ -1,38 +1,181 @@
+# application.yml
+spring:
+  application:
+    name: jpos-payment-processor
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/jpos}
+    username: ${DB_USERNAME:jpos}
+    password: ${DB_PASSWORD:jpos123}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${DB_MAX_CONNECTIONS:20}
+      minimum-idle: ${DB_MIN_IDLE:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      pool-name: jpos-cp
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  
+  cache:
+    type: redis
+  
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 2
+
+# jPOS Configuration
 jpos:
   server:
-    port: 8120
-    host: "0.0.0.0"
-    backlog: 1000
-    max-sessions: 10000
-    virtual-threads: true
-    
-  channel:
-    type: "NACChannel"
-    timeout: 30000
-    keep-alive: true
-    
-  transaction:
-    max-sessions: 100
-    timeout: 30000
-    virtual-threads: true
-    
+    port: ${JPOS_PORT:8120}
+    host: ${JPOS_HOST:0.0.0.0}
+    max-sessions: ${JPOS_MAX_SESSIONS:1000}
+    virtual-threads: ${JPOS_VIRTUAL_THREADS:true}
+    timeout: ${JPOS_TIMEOUT:30000}
+  
+  security:
+    enabled: ${SECURITY_ENABLED:true}
+    jwt-secret: ${JWT_SECRET:your-256-bit-secret}
+    jwt-expiration: ${JWT_EXPIRATION:3600000}
+  
   database:
-    driver: "org.postgresql.Driver"
-    url: "jdbc:postgresql://localhost:5432/jpos"
-    username: "jpos"
-    password: "jpos123"
-    max-connections: 50
-    
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    max-connections: ${spring.datasource.hikari.maximum-pool-size}
+  
+  transaction:
+    max-parallel: ${TXN_MAX_PARALLEL:100}
+    timeout: ${TXN_TIMEOUT:30000}
+    retry-attempts: ${TXN_RETRY_ATTEMPTS:3}
+  
+  fraud:
+    enabled: ${FRAUD_DETECTION_ENABLED:true}
+    threshold: ${FRAUD_THRESHOLD:1000000}
+    velocity-check: ${FRAUD_VELOCITY_CHECK:true}
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
   metrics:
-    enabled: true
     export:
       prometheus:
         enabled: true
-        step: "PT1M"
+        step: PT1M
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+      percentiles:
+        "[http.server.requests]": 0.5,0.95,0.99
+  info:
+    git:
+      mode: full
+    build:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    com.company.jpos: ${LOG_LEVEL:INFO}
+    org.jpos: ${JPOS_LOG_LEVEL:INFO}
+    org.springframework.security: ${SECURITY_LOG_LEVEL:WARN}
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId}] %logger{50} - %msg%n"
+  file:
+    name: ${LOG_FILE:logs/application.log}
+
+# Circuit breaker configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      transaction-processor:
+        register-health-indicator: true
+        sliding-window-size: 100
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000ms
+        permitted-number-of-calls-in-half-open-state: 10
+  
+  ratelimiter:
+    instances:
+      transaction-processor:
+        limit-for-period: 1000
+        limit-refresh-period: 1s
+        timeout-duration: 0s
+  
+  retry:
+    instances:
+      transaction-processor:
+        max-attempts: 3
+        wait-duration: 1000ms
+        retry-exceptions:
+          - java.sql.SQLException
+          - org.springframework.dao.DataAccessException
+
+---
+# =============================================================================
+# 2. Production Profile
+# =============================================================================
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
       
-  logging:
-    level:
-      root: "INFO"
-      org.jpos: "DEBUG"
-    structured: true
-    format: "json"
+jpos:
+  server:
+    max-sessions: 5000
+    
+logging:
+  level:
+    com.company.jpos: INFO
+    org.jpos: WARN
+    org.springframework.security: ERROR
+    org.hibernate.SQL: ERROR
+  file:
+    name: /app/logs/jpos-prod.log
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      transaction-processor:
+        sliding-window-size: 1000
+        minimum-number-of-calls: 100

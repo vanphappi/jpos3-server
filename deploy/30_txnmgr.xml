@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <txnmgr class="org.jpos.transaction.TransactionManager" logger="Q2" realm="txnmgr" name="txnmgr">
   <property name="space" value="transient:default"/>
-  <property name="queue" value="IN"/>          <!-- BẮT BUỘC: phải có -->
-  <property name="sessions" value="5"/>        <!-- song song 5 phiên -->
-  <property name="max-sessions" value="1000"/> <!-- trần -->
-  <property name="timeout" value="30000"/>     <!-- ms, tùy chọn -->
+  <property name="queue" value="IN"/>
+  <property name="sessions" value="10"/>
+  <property name="max-sessions" value="100"/>
+  <property name="timeout" value="30000"/>
+  <property name="pause-timeout" value="5000"/>
+  <property name="retry-timeout" value="10000"/>
+  
+  <participant class="com.company.jpos.participants.AuthorizationParticipant" logger="Q2" realm="auth"/>
 </txnmgr>

@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+jpos:
+  server:
+    port: 18120
+  security:
+    enabled: false
+  transaction:
+    timeout: 5000
+
+logging:
+  level:
+    com.company.jpos: DEBUG
+    org.springframework.test: DEBUG

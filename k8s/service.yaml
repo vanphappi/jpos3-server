@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jpos-payment-service
+  namespace: jpos-payment
+spec:
+  selector:
+    app: jpos-payment
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: jpos
+      protocol: TCP
+      port: 8120
+      targetPort: 8120
+  type: ClusterIP

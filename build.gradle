@@ -1,5 +1,6 @@
 plugins {
-    id 'java-library'
+    id 'java'
+    id 'application'
 }
 
 group = 'com.company.jpos'
@@ -18,6 +19,13 @@ repositories {
 
 dependencies {
     implementation 'org.jpos:jpos:3.0.0'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
 }
 
 tasks.named('compileJava') {
@@ -25,14 +33,32 @@ tasks.named('compileJava') {
     options.encoding = 'UTF-8'
 }
 
+tasks.named('test') {
+    jvmArgs '--enable-preview'
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'com.company.jpos.JPOSServerMain'
+}
+
 task startServer(type: JavaExec) {
     group = 'Application'
+    description = 'Starts the jPOS server'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.company.jpos.JPOSServerMain'
     jvmArgs = [
         '--enable-preview',
-        '-Xmx1g',
-        '--add-opens=java.base/java.lang=ALL-UNNAMED'
+        '-Xmx2g',
+        '-Xms1g',
+        '-XX:+UseZGC',
+        '--add-opens=java.base/java.lang=ALL-UNNAMED',
+        '--add-opens=java.base/java.util=ALL-UNNAMED',
+        '-Djdk.virtualThreadScheduler.parallelism=200',
+        '-Djdk.virtualThreadScheduler.maxPoolSize=256'
     ]
     workingDir = projectDir
+    
+    systemProperty 'jpos.logger.Q2', 'INFO'
+    systemProperty 'user.timezone', 'Asia/Ho_Chi_Minh'
 }
