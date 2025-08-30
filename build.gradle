@@ -44,6 +44,7 @@ dependencies {
 
     // Micrometer for Prometheus metrics
     implementation 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // Database
     runtimeOnly 'com.h2database:h2'
@@ -76,3 +77,6 @@ task runTestClient(type: JavaExec) {
     mainClass = 'com.company.jpos.TestClient'
 }
 
+bootRun {
+    classpath = sourceSets.main.runtimeClasspath
+}
