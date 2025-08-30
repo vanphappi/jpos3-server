@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.springframework.boot' version '3.2.0'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'com.company.jpos'
@@ -14,42 +14,47 @@ java {
     }
 }
 
+// Disable the Spring Boot fat JAR and enable the standard JAR packaging.
+// This resolves class loader conflicts with jPOS's dynamic module loading.
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+
 repositories {
     mavenCentral()
-    // Try alternative repositories for jPOS if needed
-    maven { 
-        url = 'https://repo1.maven.org/maven2'
-        name = 'Maven Central Mirror'
-    }
-    // Add jPOS repository only if accessible
-    maven { 
+    maven {
         url = 'https://jpos.org/maven'
         name = 'jPOS Repository'
-        allowInsecureProtocol = false
     }
 }
 
 dependencies {
     // jPOS Core
     implementation 'org.jpos:jpos:3.0.0'
-    
-    // Spring Boot starters (includes Jakarta Servlet API)
-    implementation 'org.springframework.boot:spring-boot-starter'
+
+    // Spring Boot starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    
+
+    // Micrometer for Prometheus metrics
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     // Database
     runtimeOnly 'com.h2database:h2'
-    
+
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    
-    // Testcontainers
+
+    // Testcontainers for integration testing
     testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
     testImplementation 'org.testcontainers:postgresql:1.19.0'
-    testImplementation 'org.testcontainers:testcontainers:1.19.0'
 }
 
 test {
@@ -62,10 +67,12 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainClass = 'com.company.jpos.JPOSServerMain'
+    mainClass = 'com.company.jpos.JposApplication'
 }
 
-bootJar {
-    archiveFileName = 'jpos-server.jar'
-    mainClass = 'com.company.jpos.JPOSServerMain'
+// Custom task to run the TestClient
+task runTestClient(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.company.jpos.TestClient'
 }
+
