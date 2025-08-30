@@ -1,0 +1,5 @@
+#!/bin/bash
+cd `dirname $0`/.. && java $JAVA_OPTS -server -Xmx1G \
+    --add-opens java.base/java.lang=ALL-UNNAMED \
+    --add-opens java.base/java.nio=ALL-UNNAMED \
+    -jar jpos-server-1.0.0-SNAPSHOT.jar "$@"

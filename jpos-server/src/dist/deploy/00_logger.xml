@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger name="Q2" class="org.jpos.util.SimpleLogListener">
+    <property name="file" value="log/q2.log" />
+</logger>

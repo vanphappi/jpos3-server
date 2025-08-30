@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qserver name="qserver" class="org.jpos.q2.qbean.QServer" logger="Q2">
+    <attr name="port" type="java.lang.Integer">8000</attr>
+    <attr name="minSessions" type="java.lang.Integer">1</attr>
+    <attr name="maxSessions" type="java.lang.Integer">100</attr>
+    
+    <channel class="org.jpos.iso.channel.NACChannel" 
+             packager="org.jpos.iso.packager.GenericPackager"
+             header="ISO015000077">
+        <property name="packager-config" value="cfg/packager/iso87ascii.xml" />
+    </channel>
+    
+    <request-listener class="org.jpos.iso.ISORequestListener">
+        <property name="timeout" value="30000" />
+    </request-listener>
+</qserver>

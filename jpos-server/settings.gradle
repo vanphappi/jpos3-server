@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        maven { url = uri('https://jpos.org/maven') }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'jpos-server'

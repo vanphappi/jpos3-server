@@ -1,0 +1,11 @@
+#!/bin/bash
+cd `dirname $0`/..
+if [ -f log/Q2.pid ]; then
+    PID=$(cat log/Q2.pid)
+    echo "Stopping jPOS Server (PID: $PID)..."
+    kill $PID
+    rm -f log/Q2.pid
+    echo "jPOS Server stopped"
+else
+    echo "No PID file found. Server may not be running."
+fi

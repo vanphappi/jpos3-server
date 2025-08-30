@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel-adaptor name="channel-adaptor" class="org.jpos.q2.qbean.ChannelAdaptor" logger="Q2">
+    <channel class="org.jpos.iso.channel.NACChannel" 
+             packager="org.jpos.iso.packager.GenericPackager"
+             header="ISO015000077">
+        <property name="packager-config" value="cfg/packager/iso87ascii.xml" />
+        <property name="host" value="localhost" />
+        <property name="port" value="8000" />
+    </channel>
+    
+    <in>txnqueue</in>
+    <out>txnqueue</out>
+    <reconnect-delay>10000</reconnect-delay>
+</channel-adaptor>

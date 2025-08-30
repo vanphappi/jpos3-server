@@ -1,0 +1,9 @@
+#!/bin/bash
+cd `dirname $0`/..
+exec java $JAVA_OPTS -server -Xmx1G \
+    --add-opens java.base/java.lang=ALL-UNNAMED \
+    --add-opens java.base/java.nio=ALL-UNNAMED \
+    -jar jpos-server-1.0.0-SNAPSHOT.jar > log/Q2.log 2>&1 &
+echo $! > log/Q2.pid
+echo "jPOS Server started with PID: $(cat log/Q2.pid)"
+echo "Log file: log/Q2.log"

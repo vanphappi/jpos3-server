@@ -1,0 +1,15 @@
+# jPOS Default Configuration
+logger:
+  realm: Q2
+  level: INFO
+  
+database:
+  enabled: false
+  
+server:
+  port: 8000
+  packager: org.jpos.iso.packager.GenericPackager
+  
+transaction:
+  timeout: 30000
+  max-sessions: 10
