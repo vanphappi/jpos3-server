@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <txnmgr name="txnmgr" class="org.jpos.transaction.TransactionManager" logger="Q2">
-    <property name="space" value="transient:default" />
-    <property name="queue" value="txnqueue" />
-    <property name="max-sessions" value="10" />
-    <property name="debug" value="true" />
-    
-    <participant class="com.example.MyParticipant" logger="Q2">
-        <property name="timeout" value="30000" />
-    </participant>
-    
-    <participant class="com.example.ResponseParticipant" logger="Q2" />
+  <property name="space" value="transient:default"/>
+  <!-- TM lắng nghe queue 'in' (khớp với ChannelAdaptor <out>) -->
+  <property name="queue" value="in"/>
+  <property name="max-sessions" value="10"/>
+  <property name="debug" value="true"/>
+
+  <participant class="com.example.MyParticipant" logger="Q2">
+    <property name="timeout" value="30000"/>
+  </participant>
+
+  <participant class="com.example.ResponseParticipant" logger="Q2"/>
 </txnmgr>

@@ -18,6 +18,11 @@ repositories {
 
 dependencies {
     implementation 'org.jpos:jpos:3.0.0'
+
+    // implementation 'org.jpos:jpos-qbeans:3.0.0'  // Thêm dòng này
+    
+    // Hoặc thử
+    // implementation 'org.jpos:jpos-ee:3.0.0'
     
     // Logging
     implementation 'org.slf4j:slf4j-api:2.0.9'
@@ -32,6 +37,14 @@ test {
     useJUnitPlatform()
 }
 
+tasks.register('runTestClient', JavaExec) {
+    group = 'application'
+    description = 'Run TestClient'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.example.TestClient'
+    // args 'foo', 'bar' // nếu cần truyền tham số
+}
+
 // jPOS plugin configuration
 jpos {
     target = "devel"
@@ -40,3 +53,4 @@ jpos {
     archiveJarName = "${project.name}-${version}.jar"
     installDir = "${buildDir}/install/${project.name}"
 }
+
