@@ -16,29 +16,47 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url = 'https://jpos.org/maven' }
+    // Try alternative repositories for jPOS if needed
+    maven { 
+        url = 'https://repo1.maven.org/maven2'
+        name = 'Maven Central Mirror'
+    }
+    // Add jPOS repository only if accessible
+    maven { 
+        url = 'https://jpos.org/maven'
+        name = 'jPOS Repository'
+        allowInsecureProtocol = false
+    }
 }
 
 dependencies {
     // jPOS Core
     implementation 'org.jpos:jpos:3.0.0'
     
-    // Spring Boot (Optional - for production features)
+    // Spring Boot starters (includes Jakarta Servlet API)
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     
-    // Metrics (Optional)
-    implementation 'io.micrometer:micrometer-registry-prometheus'
-    
-    // Logging
-    implementation 'org.slf4j:slf4j-api:2.0.7'
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    // Database
+    runtimeOnly 'com.h2database:h2'
     
     // Testing
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    
+    // Testcontainers
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
+    testImplementation 'org.testcontainers:postgresql:1.19.0'
+    testImplementation 'org.testcontainers:testcontainers:1.19.0'
 }
 
-tasks.named('compileJava') {
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
     options.compilerArgs += ['--enable-preview']
     options.encoding = 'UTF-8'
 }
@@ -47,18 +65,7 @@ application {
     mainClass = 'com.company.jpos.JPOSServerMain'
 }
 
-task startServer(type: JavaExec) {
-    group = 'Application'
-    description = 'Starts the jPOS server'
-    classpath = sourceSets.main.runtimeClasspath
+bootJar {
+    archiveFileName = 'jpos-server.jar'
     mainClass = 'com.company.jpos.JPOSServerMain'
-    jvmArgs = [
-        '--enable-preview',
-        '-Xmx2g',
-        '-Xms1g',
-        '-XX:+UseZGC',
-        '--add-opens=java.base/java.lang=ALL-UNNAMED',
-        '--add-opens=java.base/java.util=ALL-UNNAMED'
-    ]
-    workingDir = projectDir
 }

@@ -14,7 +14,8 @@ public class TestClient {
             System.out.println("🧪 jPOS Test Client Starting...");
             
             Socket socket = new Socket("localhost", 8120);
-            ASCIIChannel channel = new ASCIIChannel(socket, new ISO87APackager());
+            // Correct jPOS 3.x constructor: host, port, packager
+            ASCIIChannel channel = new ASCIIChannel("localhost", 8120, new ISO87APackager());
             channel.connect();
             System.out.println("✅ Connected to jPOS server");
             
@@ -29,6 +30,7 @@ public class TestClient {
             
         } catch (Exception e) {
             System.err.println("❌ Test failed: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -75,6 +77,7 @@ public class TestClient {
     }
     
     private static String maskPAN(String pan) {
+        if (pan == null || pan.length() < 8) return "****";
         return pan.substring(0, 4) + "****" + pan.substring(pan.length() - 4);
     }
 }

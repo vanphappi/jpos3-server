@@ -4,7 +4,8 @@ import org.jpos.transaction.Context;
 import org.jpos.transaction.TransactionParticipant;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.ISOSource;
-import org.jpos.util.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,15 +16,7 @@ public class AuthorizationParticipant implements TransactionParticipant {
     
     private static final AtomicLong transactionCounter = new AtomicLong(0);
     private static final Random random = new Random();
-    private Logger logger;
-    
-    public AuthorizationParticipant() {
-        try {
-            logger = Logger.getLogger("Q2");
-        } catch (Exception e) {
-            System.err.println("Could not get logger: " + e.getMessage());
-        }
-    }
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationParticipant.class);
     
     @Override
     public int prepare(long id, Serializable context) {
@@ -163,18 +156,10 @@ public class AuthorizationParticipant implements TransactionParticipant {
     }
     
     private void logInfo(String message) {
-        if (logger != null) {
-            logger.info(message);
-        } else {
-            System.out.println("[INFO] " + message);
-        }
+        logger.info(message);
     }
     
     private void logError(String message) {
-        if (logger != null) {
-            logger.error(message);
-        } else {
-            System.err.println("[ERROR] " + message);
-        }
+        logger.error(message);
     }
 }

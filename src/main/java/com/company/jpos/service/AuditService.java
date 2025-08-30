@@ -69,15 +69,29 @@ public class AuditService {
     }
     
     private AuditRecord createAuditRecord(ISOMsg request, ISOMsg response, String correlationId) {
-        return new AuditRecord(
-            correlationId,
-            request.getMTI(),
-            request.getString(11), // STAN
-            maskPAN(request.getString(2)), // PAN
-            request.getString(4), // Amount
-            response.getString(39), // Response code
-            LocalDateTime.now()
-        );
+        try {
+            return new AuditRecord(
+                correlationId,
+                request.getMTI(),
+                request.getString(11), // STAN
+                maskPAN(request.getString(2)), // PAN
+                request.getString(4), // Amount
+                response.getString(39), // Response code
+                LocalDateTime.now()
+            );
+        } catch (Exception e) {
+            logger.error("Error creating audit record - Correlation: {}", correlationId, e);
+            // Return a default audit record if there's an exception
+            return new AuditRecord(
+                correlationId,
+                "UNKNOWN",
+                "UNKNOWN",
+                "****",
+                "0",
+                "99", // System error
+                LocalDateTime.now()
+            );
+        }
     }
     
     private String maskPAN(String pan) {
