@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'com.company.jpos'
@@ -18,24 +20,27 @@ repositories {
 }
 
 dependencies {
+    // jPOS Core
     implementation 'org.jpos:jpos:3.0.0'
     
-    // Testing
-    testImplementation 'junit:junit:4.13.2'
+    // Spring Boot (Optional - for production features)
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    // Metrics (Optional)
+    implementation 'io.micrometer:micrometer-registry-prometheus'
     
     // Logging
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'ch.qos.logback:logback-classic:1.4.11'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
 }
 
 tasks.named('compileJava') {
     options.compilerArgs += ['--enable-preview']
     options.encoding = 'UTF-8'
-}
-
-tasks.named('test') {
-    jvmArgs '--enable-preview'
-    useJUnitPlatform()
 }
 
 application {
@@ -53,12 +58,7 @@ task startServer(type: JavaExec) {
         '-Xms1g',
         '-XX:+UseZGC',
         '--add-opens=java.base/java.lang=ALL-UNNAMED',
-        '--add-opens=java.base/java.util=ALL-UNNAMED',
-        '-Djdk.virtualThreadScheduler.parallelism=200',
-        '-Djdk.virtualThreadScheduler.maxPoolSize=256'
+        '--add-opens=java.base/java.util=ALL-UNNAMED'
     ]
     workingDir = projectDir
-    
-    systemProperty 'jpos.logger.Q2', 'INFO'
-    systemProperty 'user.timezone', 'Asia/Ho_Chi_Minh'
 }
