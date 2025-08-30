@@ -5,7 +5,7 @@
              header="ISO015000077">
         <property name="packager-config" value="cfg/packager/iso87ascii.xml" />
         <property name="host" value="localhost" />
-        <property name="port" value="8000" />
+        <property name="port" value="9150" />
     </channel>
     
     <in>txnqueue</in>

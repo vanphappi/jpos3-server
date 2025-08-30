@@ -10,7 +10,7 @@ import org.jpos.iso.packager.GenericPackager;
 public class TestClient {
     public static void main(String[] args) throws Exception {
         System.out.println("jPOS Test Client");
-        System.out.println("Connecting to localhost:8000");
+        System.out.println("Connecting to localhost:9150");
         
         // Create packager programmatically to avoid file path issues
         ISOPackager packager = createPackager();
@@ -18,7 +18,7 @@ public class TestClient {
         // Create channel - correct way for jPOS 3.0
         NACChannel channel = new NACChannel();
         channel.setHost("localhost");
-        channel.setPort(8000);
+        channel.setPort(9150);
         channel.setPackager(packager);
         
         try {

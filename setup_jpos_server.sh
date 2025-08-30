@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Default values
 PROJECT_NAME=${1:-"jpos-server"}
-SERVER_PORT=${2:-"8000"}
+SERVER_PORT=${2:-"9150"}
 GROUP_ID="com.example.jpos"
 VERSION="1.0.0-SNAPSHOT"
 

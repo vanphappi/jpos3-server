@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <qserver name="qserver" class="org.jpos.q2.qbean.QServer" logger="Q2">
-    <attr name="port" type="java.lang.Integer">8000</attr>
+    <attr name="port" type="java.lang.Integer">9150</attr>
     <attr name="minSessions" type="java.lang.Integer">1</attr>
     <attr name="maxSessions" type="java.lang.Integer">100</attr>
     

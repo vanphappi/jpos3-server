@@ -43,7 +43,7 @@ Run the test client:
 
 ## Configuration
 
-- Server port: 8000
+- Server port: 9150
 - Logs: `log/q2.log`
 - Configuration: `cfg/default.yml`
 
