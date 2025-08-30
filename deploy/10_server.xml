@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server class="org.jpos.q2.iso.QServer" logger="Q2" realm="iso-server" name="iso-server">
+  <!-- BẮT BUỘC: port phải là attr -->
+  <attr name="port" type="java.lang.Integer">8120</attr>
+
+  <!-- Channel + packager mẫu -->
+  <channel class="org.jpos.iso.channel.ASCIIChannel"
+           packager="org.jpos.iso.packager.ISO87APackager" />
+
+  <!-- Đẩy yêu cầu nhận được vào queue IN cho TransactionManager -->
+  <request-listener class="org.jpos.iso.IncomingListener" logger="Q2">
+    <property name="queue" value="IN"/>
+    <!-- Tùy chọn: gắn DESTINATION để người xử lý biết nơi trả về -->
+    <property name="ctx.DESTINATION" value="OUT"/>
+  </request-listener>
+
+  <!-- Tên queue “sẵn sàng” (tùy chọn) -->
+  <ready>iso-server.ready</ready>
+</server>

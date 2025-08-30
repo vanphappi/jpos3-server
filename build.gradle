@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.company.jpos'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://jpos.org/maven' }
+}
+
+dependencies {
+    implementation 'org.jpos:jpos:3.0.0'
+}
+
+tasks.named('compileJava') {
+    options.compilerArgs += ['--enable-preview']
+    options.encoding = 'UTF-8'
+}
+
+task startServer(type: JavaExec) {
+    group = 'Application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.company.jpos.JPOSServerMain'
+    jvmArgs = [
+        '--enable-preview',
+        '-Xmx1g',
+        '--add-opens=java.base/java.lang=ALL-UNNAMED'
+    ]
+    workingDir = projectDir
+}

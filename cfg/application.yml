@@ -1,0 +1,38 @@
+jpos:
+  server:
+    port: 8120
+    host: "0.0.0.0"
+    backlog: 1000
+    max-sessions: 10000
+    virtual-threads: true
+    
+  channel:
+    type: "NACChannel"
+    timeout: 30000
+    keep-alive: true
+    
+  transaction:
+    max-sessions: 100
+    timeout: 30000
+    virtual-threads: true
+    
+  database:
+    driver: "org.postgresql.Driver"
+    url: "jdbc:postgresql://localhost:5432/jpos"
+    username: "jpos"
+    password: "jpos123"
+    max-connections: 50
+    
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: "PT1M"
+      
+  logging:
+    level:
+      root: "INFO"
+      org.jpos: "DEBUG"
+    structured: true
+    format: "json"
