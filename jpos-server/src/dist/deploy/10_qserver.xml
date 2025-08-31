@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qserver name="qserver" logger="Q2" class="org.jpos.q2.iso.QServer">
-  <attr name="port" type="java.lang.Integer">9150</attr>
-  <attr name="maxSessions" type="java.lang.Integer">100</attr>
+<qserver name="qserver" class="org.jpos.q2.iso.QServer" logger="Q2" realm="qserver.server">
+  <!-- cổng lắng nghe -->
+  <attr name="port" type="int">9150</attr>
 
+  <!-- KHỞI TẠO KÊNH + PACKAGER -->
+  <!-- Cách 1: dùng attribute packager (gọn nhất) -->
   <channel class="org.jpos.iso.channel.NACChannel"
-           packager="org.jpos.iso.packager.ISO87APackager">
-    <property name="header" value="ISO015000077"/>
+           packager="org.jpos.iso.packager.ISO87APackager"/>
+
+  <!-- Cách 2 (tương đương): dùng property
+  <channel class="org.jpos.iso.channel.NACChannel">
+    <property name="packager" value="org.jpos.iso.packager.ISO87APackager"/>
   </channel>
+  -->
+
+  <!-- đẩy request vào txnmgr -->
+  <property name="space" value="transient:default"/>
+  <property name="in"    value="txnqueue"/>
 </qserver>
