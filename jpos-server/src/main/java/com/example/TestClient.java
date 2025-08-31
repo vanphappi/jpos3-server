@@ -17,7 +17,7 @@ public class TestClient {
         channel.setHost("127.0.0.1");
         channel.setPort(9150);
         // channel.setTimeout(10000); // nếu bạn muốn, dùng biến kiểu NACChannel (không dùng ISOChannel)
-
+        channel.setTimeout(5000);
         channel.connect();
 
         ISOMsg m = new ISOMsg();
