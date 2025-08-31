@@ -4,17 +4,9 @@
   <attr name="port" type="int">9150</attr>
 
   <!-- KHỞI TẠO KÊNH + PACKAGER -->
-  <!-- Cách 1: dùng attribute packager (gọn nhất) -->
   <channel class="org.jpos.iso.channel.NACChannel"
            packager="org.jpos.iso.packager.ISO87APackager"/>
 
-  <!-- Cách 2 (tương đương): dùng property
-  <channel class="org.jpos.iso.channel.NACChannel">
-    <property name="packager" value="org.jpos.iso.packager.ISO87APackager"/>
-  </channel>
-  -->
-
-  <!-- đẩy request vào txnmgr -->
-  <property name="space" value="transient:default"/>
-  <property name="in"    value="txnqueue"/>
+  <!-- Sử dụng QueueingListener để đẩy request vào txnmgr -->
+  <request-listener class="com.example.QueueingListener" logger="Q2"/>
 </qserver>
