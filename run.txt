@@ -1,0 +1,8 @@
+# Clean và rebuild
+./gradlew clean build installApp
+
+# Start server
+cd build/install/jpos-server
+bin/q2
+
+./gradlew runTestClient
